@@ -22,5 +22,6 @@ build:
     - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/Annotators/resolve/main/sk_model.pth -d /content/DiffSynth-Studio/models/Annotators -o sk_model.pth
     - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/Annotators/resolve/main/sk_model2.pth -d /content/DiffSynth-Studio/models/Annotators -o sk_model2.pth
     - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M "https://civitai.com/api/download/models/25820?type=Model&format=PickleTensor&size=full&fp=fp16" -d /content/DiffSynth-Studio/models/textual_inversion -o verybadimagenegative_v1.3.pt
+    - pip install modelscope
 
 predict: "predict.py:Predictor"
