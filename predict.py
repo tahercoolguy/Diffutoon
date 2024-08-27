@@ -13,8 +13,8 @@ class Predictor(BasePredictor):
     def predict(
         self,
         input_video: Path = Input(description="Input video"),
-        prompt: str = Input(description="Prompt for stage 1", default="best quality, perfect anime illustration, orange clothes, night, a girl is dancing, smile, solo, black silk stockings"),
-        prompt_2: str = Input(description="Prompt for stage 2", default="best quality, perfect anime illustration, light, a girl is dancing, smile, solo"),
+        prompt: str = Input(description="Prompt for stage 1", default="best quality, perfect anime illustration"),
+        prompt_2: str = Input(description="Prompt for stage 2", default="best quality, perfect anime illustration, light"),
     ) -> Path:
         config_stage_1_template = {
             "models": {
@@ -78,7 +78,7 @@ class Predictor(BasePredictor):
             "pipeline": {
                 "seed": 0,
                 "pipeline_inputs": {
-                    "prompt": "best quality, perfect anime illustration, orange clothes, night, a girl is dancing, smile, solo, black silk stockings",
+                    "prompt": "best quality, perfect anime illustration",
                     "negative_prompt": "verybadimagenegative_v1.3",
                     "cfg_scale": 7.0,
                     "clip_skip": 1,
@@ -174,7 +174,7 @@ class Predictor(BasePredictor):
             "pipeline": {
                 "seed": 0,
                 "pipeline_inputs": {
-                    "prompt": "best quality, perfect anime illustration, light, a girl is dancing, smile, solo",
+                    "prompt": "best quality, perfect anime illustration",
                     "negative_prompt": "verybadimagenegative_v1.3",
                     "cfg_scale": 7.0,
                     "clip_skip": 2,
