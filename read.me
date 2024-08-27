@@ -1,0 +1,64 @@
+# Diffutoon Cog Model for Replicate
+
+This repository contains a Cog model for running the Diffutoon video generation model on Replicate. Diffutoon is a two-stage AI model that transforms videos into high-quality anime-style animations.
+
+## How it Works
+
+The model uses a two-stage process:
+
+**Stage 1: Colorization and Initial Styling**
+
+* Takes an input video and applies ControlNet with softedge and depth guidance.
+* Generates a colorized and stylized video with a lower resolution (512x512).
+
+**Stage 2: Upscaling and Refinement**
+
+* Takes the output of Stage 1 and the original input video.
+* Applies ControlNet with tile and lineart guidance.
+* Generates a higher resolution (1024x1024) anime-style video with enhanced details.
+
+## Running on Replicate
+
+This model is designed to run on Replicate. You can find it [here](YOUR_REPLICATE_MODEL_LINK).
+
+**Inputs:**
+
+* **input_video:** The input video you want to transform into anime style.
+* **prompt:** A text prompt to guide the generation in Stage 1 (default: "best quality, perfect anime illustration, orange clothes, night, a girl is dancing, smile, solo, black silk stockings").
+* **prompt_2:** A text prompt to guide the generation in Stage 2 (default: "best quality, perfect anime illustration, light, a girl is dancing, smile, solo").
+
+**Outputs:**
+
+* A video in MP4 format with the anime-style transformation applied.
+
+## Running Locally (Optional)
+
+You can also run this model locally using Cog.
+
+**Prerequisites:**
+
+* **Cog:** Install Cog using `pip install cog`.
+* **NVIDIA GPU:**  This model requires an NVIDIA GPU with CUDA support.
+
+**Steps:**
+
+1. Clone this repository: `git clone https://github.com/YOUR_USERNAME/diffutoon-cog.git`
+2. Navigate to the directory: `cd diffutoon-cog`
+3. Build the Cog model: `cog build -t diffutoon`
+4. Run the prediction: `cog predict -i input_video=@your_input_video.mp4 -i prompt="your prompt" -i prompt_2="your prompt 2"`
+
+Replace `your_input_video.mp4` with the path to your input video.
+
+## Credits
+
+* **Diffutoon:** Developed by [modelscope/DiffSynth-Studio](https://github.com/modelscope/DiffSynth-Studio).
+* **ControlNet:** Developed by [lllyasviel/ControlNet](https://github.com/lllyasviel/ControlNet).
+* **Stable Diffusion:** Developed by [CompVis/stable-diffusion](https://github.com/CompVis/stable-diffusion).
+
+## License
+
+This project is licensed under the Apache 2.0 License.
+
+## Disclaimer
+
+This model is provided for research and experimentation purposes only. It may generate outputs that are not suitable for all audiences. Use it responsibly.

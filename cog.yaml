@@ -1,0 +1,26 @@
+build:
+  gpu: true
+  python_version: "3.10"
+  system_packages:
+    - ffmpeg
+  run:
+    - apt update -y && apt install -y software-properties-common python3-launchpadlib && apt update -y && add-apt-repository -y ppa:git-core/ppa && apt update -y
+    - apt install -y gcc g++ aria2 git git-lfs wget libgl1 libglib2.0-0 ffmpeg cmake libgtk2.0-0 libopenmpi-dev unzip
+    - wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda_12.1.0_530.30.02_linux.run && sh cuda_12.1.0_530.30.02_linux.run --silent --toolkit
+    - pip install torch==2.1.0+cu121 torchvision==0.16.0+cu121 torchaudio==2.1.0+cu121 torchtext==0.16.0 torchdata==0.7.0 --extra-index-url https://download.pytorch.org/whl/cu121 -U
+    - pip install einops==0.4.1 imageio==2.33.0 imageio[ffmpeg] numpy==1.23.5 omegaconf==2.2.3 Pillow==9.5.0 tqdm==4.66.1 transformers==4.30.2
+    - pip install https://download.pytorch.org/whl/cu121/xformers-0.0.22.post7-cp310-cp310-manylinux2014_x86_64.whl diffusers==0.24.0 accelerate==0.21.0 controlnet-aux==0.0.7 sentencepiece
+    - git clone https://github.com/Artiprocher/DiffSynth-Studio /content/DiffSynth-Studio
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://civitai.com/api/download/models/229575 -d /content/DiffSynth-Studio/models/stable_diffusion -o aingdiffusion_v12.safetensors
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/guoyww/animatediff/resolve/main/mm_sd_v15_v2.ckpt -d /content/DiffSynth-Studio/models/AnimateDiff -o mm_sd_v15_v2.ckpt
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_lineart.pth -d /content/DiffSynth-Studio/models/ControlNet -o control_v11p_sd15_lineart.pth
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11f1e_sd15_tile.pth -d /content/DiffSynth-Studio/models/ControlNet -o control_v11f1e_sd15_tile.pth
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11f1p_sd15_depth.pth -d /content/DiffSynth-Studio/models/ControlNet -o control_v11f1p_sd15_depth.pth
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_softedge.pth -d /content/DiffSynth-Studio/models/ControlNet -o control_v11p_sd15_softedge.pth
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/Annotators/resolve/main/dpt_hybrid-midas-501f0c75.pt -d /content/DiffSynth-Studio/models/Annotators -o dpt_hybrid-midas-501f0c75.pt
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/Annotators/resolve/main/ControlNetHED.pth -d /content/DiffSynth-Studio/models/Annotators -o ControlNetHED.pth
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/Annotators/resolve/main/sk_model.pth -d /content/DiffSynth-Studio/models/Annotators -o sk_model.pth
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/Annotators/resolve/main/sk_model2.pth -d /content/DiffSynth-Studio/models/Annotators -o sk_model2.pth
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M "https://civitai.com/api/download/models/25820?type=Model&format=PickleTensor&size=full&fp=fp16" -d /content/DiffSynth-Studio/models/textual_inversion -o verybadimagenegative_v1.3.pt
+
+predict: "predict.py:Predictor"
