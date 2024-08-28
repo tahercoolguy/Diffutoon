@@ -5,6 +5,8 @@ sys.path.append('/content/DiffSynth-Studio')
 os.chdir('/content/DiffSynth-Studio')
 
 from diffsynth import SDVideoPipelineRunner
+import cv2
+from moviepy.editor import VideoFileClip, AudioFileClip
 
 class Predictor(BasePredictor):
     def setup(self):
@@ -17,7 +19,19 @@ class Predictor(BasePredictor):
         prompt_2: str = Input(description="Prompt for stage 2", default="best quality, perfect anime illustration, light, a girl is dancing, smile, solo"),
     ) -> Path:
         fps = 20
-        end_frame_id = 5 * fps  # 5 seconds at 20 fps
+        
+        # Get the actual number of frames in the input video
+        cap = cv2.VideoCapture(str(input_video))
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        video_fps = cap.get(cv2.CAP_PROP_FPS)
+        cap.release()
+        
+        # Calculate the number of frames for 5 seconds at the original video's FPS
+        target_frames = min(int(5 * video_fps), total_frames)
+        
+        # Adjust end_frame_id based on the actual video length
+        end_frame_id = target_frames
+
         config_stage_1_template = {
             "models": {
                 "model_list": [
@@ -222,4 +236,33 @@ class Predictor(BasePredictor):
         runner = SDVideoPipelineRunner()
         runner.run(config_stage_2)
 
-        return Path("/content/edit_video/video.mp4")
+        # Extract audio from the original video
+        original_video = VideoFileClip(str(input_video))
+        audio = original_video.audio
+
+        if audio is not None:
+            # Calculate the duration of the processed video (5 seconds or less)
+            processed_duration = min(5, original_video.duration)
+
+            # Truncate the audio to match the processed video duration
+            truncated_audio = audio.subclip(0, processed_duration)
+
+            # Load the processed video
+            processed_video = VideoFileClip("/content/edit_video/video.mp4")
+
+            # Set the truncated audio to the processed video
+            final_video = processed_video.set_audio(truncated_audio)
+
+            # Write the final video with truncated audio
+            output_path = "/content/final_video_with_audio.mp4"
+            final_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
+
+            # Close the video clips
+            original_video.close()
+            processed_video.close()
+            final_video.close()
+
+            return Path(output_path)
+        else:
+            # If there's no audio in the original video, return the processed video as is
+            return Path("/content/edit_video/video.mp4")

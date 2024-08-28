@@ -24,5 +24,7 @@ build:
     - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M "https://civitai.com/api/download/models/25820?type=Model&format=PickleTensor&size=full&fp=fp16" -d /content/DiffSynth-Studio/models/textual_inversion -o verybadimagenegative_v1.3.pt
     - pip install modelscope
     - pip install cupy-cuda12x
+    - pip install opencv-python-headless  # Add this line to install OpenCV
+    - pip install moviepy  # Add this line to install moviepy
 
 predict: "predict.py:Predictor"
