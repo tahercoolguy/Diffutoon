@@ -16,7 +16,7 @@ class Predictor(BasePredictor):
         prompt: str = Input(description="Prompt for stage 1", default="best quality, perfect anime illustration, orange clothes, night, a girl is dancing, smile, solo, black silk stockings"),
         prompt_2: str = Input(description="Prompt for stage 2", default="best quality, perfect anime illustration, light, a girl is dancing, smile, solo"),
     ) -> Path:
-        end_frame_id = 6 * 25  # Assuming 25 FPS
+        end_frame_id = 6 * 15  # Assuming 15 FPS
         config_stage_1_template = {
             "models": {
                 "model_list": [
