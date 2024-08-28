@@ -16,7 +16,8 @@ class Predictor(BasePredictor):
         prompt: str = Input(description="Prompt for stage 1", default="best quality, perfect anime illustration, orange clothes, night, a girl is dancing, smile, solo, black silk stockings"),
         prompt_2: str = Input(description="Prompt for stage 2", default="best quality, perfect anime illustration, light, a girl is dancing, smile, solo"),
     ) -> Path:
-        end_frame_id = 6 * 20  # Assuming 15 FPS
+        fps = 20
+        end_frame_id = 5 * fps  # 5 seconds at 20 fps
         config_stage_1_template = {
             "models": {
                 "model_list": [
@@ -108,11 +109,11 @@ class Predictor(BasePredictor):
             "height": 512,
             "width": 512,
             "start_frame_id": 0,
-            "end_frame_id": None
+            "end_frame_id": end_frame_id
         }
         config_stage_1["data"]["controlnet_frames"] = [config_stage_1["data"]["input_frames"], config_stage_1["data"]["input_frames"]]
         config_stage_1["data"]["output_folder"] = "/content/color_video"
-        config_stage_1["data"]["fps"] = 20
+        config_stage_1["data"]["fps"] = fps
         config_stage_1["pipeline"]["pipeline_inputs"]["prompt"] = prompt
 
         runner = SDVideoPipelineRunner()
@@ -203,19 +204,19 @@ class Predictor(BasePredictor):
             "height": 1024,
             "width": 1024,
             "start_frame_id": 0,
-            "end_frame_id": None
+            "end_frame_id": end_frame_id
         }
         config_stage_2["data"]["controlnet_frames"][0] = {
             "video_file": "/content/color_video/video.mp4",
             "image_folder": None,
             "height": config_stage_2["data"]["input_frames"]["height"],
             "width": config_stage_2["data"]["input_frames"]["width"],
-            "start_frame_id": None,
-            "end_frame_id": None
+            "start_frame_id": 0,
+            "end_frame_id": end_frame_id
         }
         config_stage_2["data"]["controlnet_frames"][1] = config_stage_2["data"]["input_frames"]
         config_stage_2["data"]["output_folder"] = "/content/edit_video"
-        config_stage_2["data"]["fps"] = 20
+        config_stage_2["data"]["fps"] = fps
         config_stage_2["pipeline"]["pipeline_inputs"]["prompt"] = prompt_2
 
         runner = SDVideoPipelineRunner()
