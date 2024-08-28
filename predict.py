@@ -13,111 +13,9 @@ class Predictor(BasePredictor):
     def predict(
         self,
         input_video: Path = Input(description="Input video"),
-        prompt: str = Input(description="Prompt for stage 1", default="best quality, perfect anime illustration"),
-        prompt_2: str = Input(description="Prompt for stage 2", default="best quality, perfect anime illustration, light"),
+        prompt: str = Input(description="Prompt for the video", default="best quality, perfect anime illustration, light, a girl is dancing, smile, solo"),
     ) -> Path:
-        config_stage_1_template = {
-            "models": {
-                "model_list": [
-                    "models/stable_diffusion/aingdiffusion_v12.safetensors",
-                    "models/ControlNet/control_v11p_sd15_softedge.pth",
-                    "models/ControlNet/control_v11f1p_sd15_depth.pth"
-                ],
-                "textual_inversion_folder": "models/textual_inversion",
-                "device": "cuda",
-                "lora_alphas": [],
-                "controlnet_units": [
-                    {
-                        "processor_id": "softedge",
-                        "model_path": "models/ControlNet/control_v11p_sd15_softedge.pth",
-                        "scale": 0.5
-                    },
-                    {
-                        "processor_id": "depth",
-                        "model_path": "models/ControlNet/control_v11f1p_sd15_depth.pth",
-                        "scale": 0.5
-                    }
-                ]
-            },
-            "data": {
-                "input_frames": {
-                    "video_file": input_video,
-                    "image_folder": None,
-                    "height": 512,
-                    "width": 512,
-                    "start_frame_id": 0,
-                    "end_frame_id": None
-                },
-                "controlnet_frames": [
-                    {
-                        "video_file": input_video,
-                        "image_folder": None,
-                        "height": 512,
-                        "width": 512,
-                        "start_frame_id": 0,
-                        "end_frame_id": None
-                    },
-                    {
-                        "video_file": input_video,
-                        "image_folder": None,
-                        "height": 512,
-                        "width": 512,
-                        "start_frame_id": 0,
-                        "end_frame_id": None
-                    }
-                ],
-                "output_folder": "data/examples/diffutoon_edit/color_video",
-                "fps": 25
-            },
-            "smoother_configs": [
-                {
-                    "processor_type": "FastBlend",
-                    "config": {}
-                }
-            ],
-            "pipeline": {
-                "seed": 0,
-                "pipeline_inputs": {
-                    "prompt": "best quality, perfect anime illustration",
-                    "negative_prompt": "verybadimagenegative_v1.3",
-                    "cfg_scale": 7.0,
-                    "clip_skip": 1,
-                    "denoising_strength": 0.9,
-                    "num_inference_steps": 20,
-                    "animatediff_batch_size": 8,
-                    "animatediff_stride": 4,
-                    "unet_batch_size": 8,
-                    "controlnet_batch_size": 8,
-                    "cross_frame_attention": True,
-                    "smoother_progress_ids": [-1],
-                    # The following parameters will be overwritten. You don't need to modify them.
-                    "input_frames": [],
-                    "num_frames": 30,
-                    "width": 512,
-                    "height": 512,
-                    "controlnet_frames": []
-                }
-            }
-        }
-
-        config_stage_1 = config_stage_1_template.copy()
-        config_stage_1["data"]["input_frames"] = {
-            "video_file": input_video,
-            "image_folder": None,
-            "height": 512,
-            "width": 512,
-            "start_frame_id": 0,
-            "end_frame_id": 30
-        }
-        config_stage_1["data"]["controlnet_frames"] = [config_stage_1["data"]["input_frames"], config_stage_1["data"]["input_frames"]]
-        config_stage_1["data"]["output_folder"] = "/content/color_video"
-        config_stage_1["data"]["fps"] = 25
-        config_stage_1["pipeline"]["pipeline_inputs"]["prompt"] = prompt
-
-        runner = SDVideoPipelineRunner()
-        runner.run(config_stage_1)
-
-        config_stage_2_template = {
+        config_template = {
             "models": {
                 "model_list": [
                     "models/stable_diffusion/aingdiffusion_v12.safetensors",
@@ -148,7 +46,7 @@ class Predictor(BasePredictor):
                     "height": 1024,
                     "width": 1024,
                     "start_frame_id": 0,
-                    "end_frame_id": None
+                    "end_frame_id": None  # Process all frames
                 },
                 "controlnet_frames": [
                     {
@@ -157,7 +55,7 @@ class Predictor(BasePredictor):
                         "height": 1024,
                         "width": 1024,
                         "start_frame_id": 0,
-                        "end_frame_id": None
+                        "end_frame_id": None  # Process all frames
                     },
                     {
                         "video_file": input_video,
@@ -165,16 +63,16 @@ class Predictor(BasePredictor):
                         "height": 1024,
                         "width": 1024,
                         "start_frame_id": 0,
-                        "end_frame_id": None
+                        "end_frame_id": None  # Process all frames
                     }
                 ],
-                "output_folder": "/content/output",
+                "output_folder": "/content/toon_video",
                 "fps": 25
             },
             "pipeline": {
                 "seed": 0,
                 "pipeline_inputs": {
-                    "prompt": "best quality, perfect anime illustration",
+                    "prompt": "best quality, perfect anime illustration, light, a girl is dancing, smile, solo",
                     "negative_prompt": "verybadimagenegative_v1.3",
                     "cfg_scale": 7.0,
                     "clip_skip": 2,
@@ -185,7 +83,6 @@ class Predictor(BasePredictor):
                     "unet_batch_size": 1,
                     "controlnet_batch_size": 1,
                     "cross_frame_attention": False,
-                    # The following parameters will be overwritten. You don't need to modify them.
                     "input_frames": [],
                     "num_frames": 30,
                     "width": 1536,
@@ -195,29 +92,15 @@ class Predictor(BasePredictor):
             }
         }
 
-        config_stage_2 = config_stage_2_template.copy()
-        config_stage_2["data"]["input_frames"] = {
-            "video_file": input_video,
-            "image_folder": None,
-            "height": 1024,
-            "width": 1024,
-            "start_frame_id": 0,
-            "end_frame_id": 30
-        }
-        config_stage_2["data"]["controlnet_frames"][0] = {
-            "video_file": "/content/color_video/video.mp4",
-            "image_folder": None,
-            "height": config_stage_2["data"]["input_frames"]["height"],
-            "width": config_stage_2["data"]["input_frames"]["width"],
-            "start_frame_id": None,
-            "end_frame_id": None
-        }
-        config_stage_2["data"]["controlnet_frames"][1] = config_stage_2["data"]["input_frames"]
-        config_stage_2["data"]["output_folder"] = "/content/edit_video"
-        config_stage_2["data"]["fps"] = 25
-        config_stage_2["pipeline"]["pipeline_inputs"]["prompt"] = prompt_2
+        config = config_template.copy()
+        config["data"]["input_frames"]["video_file"] = input_video
+        config["data"]["controlnet_frames"][0]["video_file"] = input_video
+        config["data"]["controlnet_frames"][1]["video_file"] = input_video
+        config["data"]["output_folder"] = "/content/toon_video"
+        config["data"]["fps"] = 25
+        config["pipeline"]["pipeline_inputs"]["prompt"] = prompt
 
         runner = SDVideoPipelineRunner()
-        runner.run(config_stage_2)
+        runner.run(config)
 
-        return Path("/content/edit_video/video.mp4")
+        return Path("/content/toon_video/video.mp4")
