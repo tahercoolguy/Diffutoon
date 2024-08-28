@@ -16,7 +16,7 @@ class Predictor(BasePredictor):
         prompt: str = Input(description="Prompt for stage 1", default="best quality, perfect anime illustration, orange clothes, night, a girl is dancing, smile, solo, black silk stockings"),
         prompt_2: str = Input(description="Prompt for stage 2", default="best quality, perfect anime illustration, light, a girl is dancing, smile, solo"),
     ) -> Path:
-        end_frame_id = 6 * 15  # Assuming 15 FPS
+        end_frame_id = 6 * 20  # Assuming 15 FPS
         config_stage_1_template = {
             "models": {
                 "model_list": [
@@ -47,7 +47,7 @@ class Predictor(BasePredictor):
                     "height": 512,
                     "width": 512,
                     "start_frame_id": 0,
-                    "end_frame_id": end_frame_id
+                    "end_frame_id": None
                 },
                 "controlnet_frames": [
                     {
@@ -56,7 +56,7 @@ class Predictor(BasePredictor):
                         "height": 512,
                         "width": 512,
                         "start_frame_id": 0,
-                        "end_frame_id": end_frame_id
+                        "end_frame_id": None
                     },
                     {
                         "video_file": input_video,
@@ -64,7 +64,7 @@ class Predictor(BasePredictor):
                         "height": 512,
                         "width": 512,
                         "start_frame_id": 0,
-                        "end_frame_id": end_frame_id
+                        "end_frame_id": None
                     }
                 ],
                 "output_folder": "data/examples/diffutoon_edit/color_video",
@@ -79,7 +79,7 @@ class Predictor(BasePredictor):
             "pipeline": {
                 "seed": 0,
                 "pipeline_inputs": {
-                    "prompt": "best quality, perfect anime illustration, orange clothes, night, a girl is dancing, smile, solo, black silk stockings",
+                    "prompt": "best quality, perfect anime illustration",
                     "negative_prompt": "verybadimagenegative_v1.3",
                     "cfg_scale": 7.0,
                     "clip_skip": 1,
@@ -108,11 +108,11 @@ class Predictor(BasePredictor):
             "height": 512,
             "width": 512,
             "start_frame_id": 0,
-            "end_frame_id": end_frame_id
+            "end_frame_id": None
         }
         config_stage_1["data"]["controlnet_frames"] = [config_stage_1["data"]["input_frames"], config_stage_1["data"]["input_frames"]]
         config_stage_1["data"]["output_folder"] = "/content/color_video"
-        config_stage_1["data"]["fps"] = 25
+        config_stage_1["data"]["fps"] = 20
         config_stage_1["pipeline"]["pipeline_inputs"]["prompt"] = prompt
 
         runner = SDVideoPipelineRunner()
@@ -149,7 +149,7 @@ class Predictor(BasePredictor):
                     "height": 1024,
                     "width": 1024,
                     "start_frame_id": 0,
-                    "end_frame_id": end_frame_id
+                    "end_frame_id": None
                 },
                 "controlnet_frames": [
                     {
@@ -158,7 +158,7 @@ class Predictor(BasePredictor):
                         "height": 1024,
                         "width": 1024,
                         "start_frame_id": 0,
-                        "end_frame_id": end_frame_id
+                        "end_frame_id": None
                     },
                     {
                         "video_file": input_video,
@@ -166,7 +166,7 @@ class Predictor(BasePredictor):
                         "height": 1024,
                         "width": 1024,
                         "start_frame_id": 0,
-                        "end_frame_id": end_frame_id
+                        "end_frame_id": None
                     }
                 ],
                 "output_folder": "/content/output",
@@ -175,7 +175,7 @@ class Predictor(BasePredictor):
             "pipeline": {
                 "seed": 0,
                 "pipeline_inputs": {
-                    "prompt": "best quality, perfect anime illustration, light, a girl is dancing, smile, solo",
+                    "prompt": "best quality, perfect anime illustration, light",
                     "negative_prompt": "verybadimagenegative_v1.3",
                     "cfg_scale": 7.0,
                     "clip_skip": 2,
@@ -203,7 +203,7 @@ class Predictor(BasePredictor):
             "height": 1024,
             "width": 1024,
             "start_frame_id": 0,
-            "end_frame_id": end_frame_id
+            "end_frame_id": None
         }
         config_stage_2["data"]["controlnet_frames"][0] = {
             "video_file": "/content/color_video/video.mp4",
@@ -215,7 +215,7 @@ class Predictor(BasePredictor):
         }
         config_stage_2["data"]["controlnet_frames"][1] = config_stage_2["data"]["input_frames"]
         config_stage_2["data"]["output_folder"] = "/content/edit_video"
-        config_stage_2["data"]["fps"] = 25
+        config_stage_2["data"]["fps"] = 20
         config_stage_2["pipeline"]["pipeline_inputs"]["prompt"] = prompt_2
 
         runner = SDVideoPipelineRunner()
