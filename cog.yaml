@@ -10,7 +10,7 @@ build:
     - pip install torch==2.1.0+cu121 torchvision==0.16.0+cu121 torchaudio==2.1.0+cu121 torchtext==0.16.0 torchdata==0.7.0 --extra-index-url https://download.pytorch.org/whl/cu121 -U
     - pip install einops==0.4.1 imageio==2.33.0 imageio[ffmpeg] numpy==1.23.5 omegaconf==2.2.3 Pillow==9.5.0 tqdm==4.66.1 transformers==4.30.2
     - pip install https://download.pytorch.org/whl/cu121/xformers-0.0.22.post7-cp310-cp310-manylinux2014_x86_64.whl diffusers==0.24.0 accelerate==0.21.0 controlnet-aux==0.0.7 sentencepiece
-    - git clone https://github.com/Artiprocher/DiffSynth-Studio /content/DiffSynth-Studio
+    - git clone https://github.com/tahercoolguy/DiffSynth-Studio-Latest /content/DiffSynth-Studio
     - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://civitai.com/api/download/models/229575 -d /content/DiffSynth-Studio/models/stable_diffusion -o aingdiffusion_v12.safetensors
     - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/guoyww/animatediff/resolve/main/mm_sd_v15_v2.ckpt -d /content/DiffSynth-Studio/models/AnimateDiff -o mm_sd_v15_v2.ckpt
     - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_lineart.pth -d /content/DiffSynth-Studio/models/ControlNet -o control_v11p_sd15_lineart.pth
